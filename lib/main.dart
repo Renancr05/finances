@@ -4,6 +4,7 @@ import 'cotacao.dart';
 import 'historico.dart';
 import 'login.dart';
 import 'principal.dart';
+import 'splash.dart';
 import 'transferencia.dart';
 
 void main() {
@@ -21,7 +22,8 @@ class BancoDigitalApp extends StatelessWidget {
       theme: ThemeData(hintColor: Colors.green, primaryColor: Colors.white),
       initialRoute: '/',
       routes: {
-        '/': (context) => const Login(),
+        '/': (context) => const Splash(),
+        '/login': (context) => const Login(),
         '/principal': (context) => const Principal(),
         '/cotacao': (context) => const Cotacao(),
         '/transferencia': (context) => const Transferencia(),

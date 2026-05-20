@@ -1,34 +1,47 @@
-# Conversor de Moedas Finance
+# Banco Digital - Flutter Android
 
-Aplicativo desenvolvido em Flutter para conversão de moedas entre Real, Dólar e Euro.
+Projeto mobile desenvolvido em Flutter para Android, simulando um Banco Digital com acesso a banco de dados local.
+
+O aplicativo possui tela de login, tela principal, consulta de cotação via API, tela de transferência, histórico de transferências salvo em banco SQLite e uso de rotas nomeadas com argumentos.
+
+---
 
 ## Funcionalidades
 
-- Conversão de Real para Dólar
-- Conversão de Real para Euro
-- Conversão de Dólar para Real
-- Conversão de Euro para Real
-- Consumo de API externa de cotações
-- Formatação monetária
+- Login de usuário.
+- Tela principal com dados do usuário.
+- Cotação de moedas via API.
+- Conversão entre Real, Dólar e Euro.
+- Transferência bancária simulada.
+- Histórico de transferências.
+- Banco de dados local SQLite.
+- Compartilhamento de comprovante.
+- Rotas nomeadas.
+- Rotas nomeadas com argumentos.
+- Geração de APK Android.
+
+---
+
+## Tecnologias utilizadas
+
+- Flutter.
+- Dart.
+- Android.
+- SQLite.
+- API HG Brasil Finance.
+
+---
 
 ## Plugins utilizados
 
-- http: utilizado para consumir a API de cotações
-- intl: utilizado para formatar valores monetários
+No arquivo `pubspec.yaml`, foram utilizados os seguintes plugins:
 
-## API utilizada
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
 
-AwesomeAPI - Economia
-Endpoint utilizado:
-
-https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL
-
-## APK
-
-O APK split deverá ser gerado pelo comando:
-
-flutter build apk --split-per-abi
-
-Após a geração, os arquivos ficarão em:
-
-build/app/outputs/flutter-apk/
+  http: ^0.13.4
+  share_plus: ^11.0.0
+  sqflite: ^2.3.0
+  path: ^1.9.0
