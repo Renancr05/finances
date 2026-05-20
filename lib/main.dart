@@ -17,7 +17,7 @@ class BancoDigitalApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Banco Digital',
+      title: 'Aplex Bank',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(hintColor: Colors.green, primaryColor: Colors.white),
       initialRoute: '/',
