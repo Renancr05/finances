@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'cotacao.dart';
 import 'historico.dart';
@@ -7,7 +8,20 @@ import 'principal.dart';
 import 'splash.dart';
 import 'transferencia.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Color(0xFF143D36),
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Color(0xFFEAF3F0),
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+
   runApp(const BancoDigitalApp());
 }
 
@@ -17,9 +31,8 @@ class BancoDigitalApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Aplex Bank',
+      title: 'Apex Bank',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(hintColor: Colors.green, primaryColor: Colors.white),
       initialRoute: '/',
       routes: {
         '/': (context) => const Splash(),
