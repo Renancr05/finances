@@ -34,6 +34,8 @@ class _TransferenciaState extends State<Transferencia> {
       final bool dispositivoSuportado = await auth.isDeviceSupported();
       final bool podeChecarBiometria = await auth.canCheckBiometrics;
 
+      if (!mounted) return false;
+
       if (!dispositivoSuportado && !podeChecarBiometria) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -52,9 +54,12 @@ class _TransferenciaState extends State<Transferencia> {
 
       return autenticado;
     } catch (e) {
+      if (!mounted) return false;
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Erro na autenticação: $e')));
+
       return false;
     }
   }
@@ -73,6 +78,8 @@ class _TransferenciaState extends State<Transferencia> {
 
     final bool autenticado = await autenticarUsuario();
 
+    if (!mounted) return;
+
     if (!autenticado) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -89,7 +96,11 @@ class _TransferenciaState extends State<Transferencia> {
       'data': DateTime.now().toString(),
     });
 
+    if (!mounted) return;
+
     await _mostrarTransferenciaConcluida();
+
+    if (!mounted) return;
 
     nomeDestinoController.clear();
     contaDestinoController.clear();
@@ -202,7 +213,7 @@ class _TransferenciaState extends State<Transferencia> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black..withValues(alpha: 0.08),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
@@ -241,7 +252,7 @@ class _TransferenciaState extends State<Transferencia> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black..withValues(alpha: 0.08),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),

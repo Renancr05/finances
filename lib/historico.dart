@@ -33,14 +33,29 @@ class _HistoricoState extends State<Historico> {
     await BancoHelper().excluirTransferencia(id);
     carregarHistorico();
   }
+  String formatarDataBrasil(String data) {
+    DateTime dateTime = DateTime.parse(data);
 
-  Future<void> compartilhar(Map<String, dynamic> item) async {
-    await Share.share(
-      'Comprovante de transferência\n'
-      'Destinatário: ${item['nomeDestino']}\n'
-      'Conta destino: ${item['contaDestino']}\n'
-      'Valor: R\$ ${item['valor']}\n'
-      'Data: ${item['data']}',
+    String dia = dateTime.day.toString().padLeft(2, '0');
+    String mes = dateTime.month.toString().padLeft(2, '0');
+    String ano = dateTime.year.toString();
+
+    String hora = dateTime.hour.toString().padLeft(2, '0');
+    String minuto = dateTime.minute.toString().padLeft(2, '0');
+
+    return '$dia/$mes/$ano $hora:$minuto';
+  }
+
+Future<void> compartilhar(Map<String, dynamic> item) async {
+    await SharePlus.instance.share(
+      ShareParams(
+        text:
+            'Comprovante de transferência\n'
+            'Destinatário: ${item['nomeDestino']}\n'
+            'Conta destino: ${item['contaDestino']}\n'
+            'Valor: R\$ ${item['valor']}\n'
+            'Data: ${formatarDataBrasil(item['data'])}',
+      ),
     );
   }
 
@@ -69,7 +84,7 @@ class _HistoricoState extends State<Historico> {
                     borderRadius: BorderRadius.circular(26),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black..withValues(alpha: 0.08),
                         blurRadius: 12,
                         offset: const Offset(0, 6),
                       ),
@@ -122,7 +137,7 @@ class _HistoricoState extends State<Historico> {
                     borderRadius: BorderRadius.circular(22),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black..withValues(alpha: 0.08),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -159,7 +174,7 @@ class _HistoricoState extends State<Historico> {
                       child: Text(
                         'Conta: ${item['contaDestino']}\n'
                         'Valor: R\$ ${item['valor']}\n'
-                        'Data: ${item['data']}',
+                        'Data: ${formatarDataBrasil(item['data'])}',
                         style: const TextStyle(
                           color: Color(0xFF143D36),
                           fontSize: 14,

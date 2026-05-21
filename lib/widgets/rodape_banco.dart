@@ -112,7 +112,7 @@ class RodapeBanco extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF48D6C5).withOpacity(0.45),
+                      color: const Color(0xFF48D6C5)..withValues(alpha: 0.45),
                       blurRadius: 18,
                       offset: const Offset(0, 6),
                     ),

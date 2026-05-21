@@ -135,7 +135,7 @@ class _CotacaoState extends State<Cotacao> {
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
+                              color: Colors.black.withValues(alpha: 0.08),
                               blurRadius: 12,
                               offset: const Offset(0, 6),
                             ),
@@ -174,7 +174,7 @@ class _CotacaoState extends State<Cotacao> {
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
+                              color: Colors.black..withValues(alpha: 0.08),
                               blurRadius: 12,
                               offset: const Offset(0, 6),
                             ),
