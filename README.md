@@ -34,6 +34,44 @@ O app possui tela inicial animada, login, tela principal, cotação de moedas vi
 
 ---
 
+## Principais comandos no terminal
+
+-Limpar e baixar dependências novamente:
+
+flutter clean
+flutter pub get
+
+-Ver dispositivos conectados:
+
+flutter devices
+
+-Gerar APK otimizado por arquitetura:
+
+flutter build apk --split-per-abi
+
+-Comandos relacionados ao Android/ADB Ir para a pasta do ADB:
+
+cd "$env:LOCALAPPDATA\Android\Sdk\platform-tools"
+
+-Reiniciar o ADB:
+
+.\adb.exe kill-server
+.\adb.exe start-server
+
+-Ver dispositivos Android reconhecidos pelo ADB:
+
+.\adb.exe devices
+
+-O ideal é aparecer:
+
+emulator-5554    device
+
+-Comandos para resolver problemas comuns, ativar modo desenvolvedor do Windows, Use quando aparecer erro de symlink:
+
+start ms-settings:developers
+
+---
+
 ## Plugins utilizados
 
 No arquivo `pubspec.yaml`, foram utilizados os seguintes plugins:
@@ -55,39 +93,3 @@ dev_dependencies:
 
   flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.14.4
-
-  Principais comandados
-
-Limpar e baixar dependências novamente:
-
-flutter clean
-flutter pub get
-
-Ver dispositivos conectados:
-
-flutter devices
-
-Gerar APK otimizado por arquitetura:
-
-flutter build apk --split-per-abi
-
-Comandos relacionados ao Android/ADB Ir para a pasta do ADB:
-
-cd "$env:LOCALAPPDATA\Android\Sdk\platform-tools"
-
-Reiniciar o ADB:
-
-.\adb.exe kill-server
-.\adb.exe start-server
-
-Ver dispositivos Android reconhecidos pelo ADB:
-
-.\adb.exe devices
-
-O ideal é aparecer:
-
-emulator-5554    device
-
-Comandos para resolver problemas comuns, ativar modo desenvolvedor do Windows, Use quando aparecer erro de symlink:
-
-start ms-settings:developers
