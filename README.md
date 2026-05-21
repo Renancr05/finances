@@ -1,34 +1,36 @@
-# Banco Digital - Flutter Android
+# Apex Bank Digital - Flutter Android
 
-Projeto mobile desenvolvido em Flutter para Android, simulando um Banco Digital com acesso a banco de dados local.
+Projeto mobile desenvolvido em Flutter para Android, simulando um aplicativo de banco digital.
 
-O aplicativo possui tela de login, tela principal, consulta de cotação via API, tela de transferência, histórico de transferências salvo em banco SQLite e uso de rotas nomeadas com argumentos.
+O app possui tela inicial animada, login, tela principal, cotação de moedas via API, transferência com autenticação local, histórico com banco de dados SQLite, compartilhamento de comprovante e navegação com rotas nomeadas e argumentos.
 
 ---
 
 ## Funcionalidades
 
-- Login de usuário.
-- Tela principal com dados do usuário.
-- Cotação de moedas via API.
+- Tela inicial com logo personalizado e animação de carregamento.
+- Tela de login.
+- Tela principal com boas-vindas ao usuário.
+- Tela de cotação com consumo de API.
 - Conversão entre Real, Dólar e Euro.
-- Transferência bancária simulada.
-- Histórico de transferências.
-- Banco de dados local SQLite.
-- Compartilhamento de comprovante.
+- Tela de transferência.
+- Autenticação local antes da transferência.
+- Histórico de transferências salvo em banco SQLite.
+- Compartilhamento de comprovante de transferência.
+- Rodapé reutilizável para navegação entre telas.
 - Rotas nomeadas.
 - Rotas nomeadas com argumentos.
-- Geração de APK Android.
+- Geração de APK otimizado para Android.
 
 ---
 
 ## Tecnologias utilizadas
 
-- Flutter.
-- Dart.
-- Android.
-- SQLite.
-- API HG Brasil Finance.
+- Flutter
+- Dart
+- Android
+- SQLite
+- API HG Brasil Finance
 
 ---
 
@@ -45,3 +47,47 @@ dependencies:
   share_plus: ^11.0.0
   sqflite: ^2.3.0
   path: ^1.9.0
+  local_auth: ^3.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+  Principais comandados
+
+Limpar e baixar dependências novamente:
+
+flutter clean
+flutter pub get
+
+Ver dispositivos conectados:
+
+flutter devices
+
+Gerar APK otimizado por arquitetura:
+
+flutter build apk --split-per-abi
+
+Comandos relacionados ao Android/ADB Ir para a pasta do ADB:
+
+cd "$env:LOCALAPPDATA\Android\Sdk\platform-tools"
+
+Reiniciar o ADB:
+
+.\adb.exe kill-server
+.\adb.exe start-server
+
+Ver dispositivos Android reconhecidos pelo ADB:
+
+.\adb.exe devices
+
+O ideal é aparecer:
+
+emulator-5554    device
+
+Comandos para resolver problemas comuns, ativar modo desenvolvedor do Windows, Use quando aparecer erro de symlink:
+
+start ms-settings:developers
