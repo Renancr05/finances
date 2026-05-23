@@ -24,6 +24,8 @@ class _HistoricoState extends State<Historico> {
   Future<void> carregarHistorico() async {
     final dados = await BancoHelper().listarTransferencias();
 
+    if (!mounted) return;
+
     setState(() {
       transferencias = dados;
     });
@@ -31,8 +33,12 @@ class _HistoricoState extends State<Historico> {
 
   Future<void> excluirItem(int id) async {
     await BancoHelper().excluirTransferencia(id);
+
+    if (!mounted) return;
+
     carregarHistorico();
   }
+
   String formatarDataBrasil(String data) {
     DateTime dateTime = DateTime.parse(data);
 
@@ -46,14 +52,22 @@ class _HistoricoState extends State<Historico> {
     return '$dia/$mes/$ano $hora:$minuto';
   }
 
-Future<void> compartilhar(Map<String, dynamic> item) async {
+  String formatarValorBrasil(dynamic valor) {
+    double numero = double.parse(valor.toString());
+
+    String valorFormatado = numero.toStringAsFixed(2);
+
+    return valorFormatado.replaceAll('.', ',');
+  }
+
+  Future<void> compartilhar(Map<String, dynamic> item) async {
     await SharePlus.instance.share(
       ShareParams(
         text:
             'Comprovante de transferência\n'
             'Destinatário: ${item['nomeDestino']}\n'
             'Conta destino: ${item['contaDestino']}\n'
-            'Valor: R\$ ${item['valor']}\n'
+            'Valor: R\$ ${formatarValorBrasil(item['valor'])}\n'
             'Data: ${formatarDataBrasil(item['data'])}',
       ),
     );
@@ -63,6 +77,7 @@ Future<void> compartilhar(Map<String, dynamic> item) async {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as UsuarioArgumentos;
+
     final w = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -72,62 +87,86 @@ Future<void> compartilhar(Map<String, dynamic> item) async {
         backgroundColor: const Color(0xFF143D36),
         foregroundColor: Colors.white,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacementNamed(
+                context,
+                '/principal',
+                arguments: args,
+              );
+            }
+          },
+        ),
       ),
       body: transferencias.isEmpty
-          ? Padding(
+          ? SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
                 16.0,
                 24.0,
                 16.0,
-                MediaQuery.of(context).orientation == Orientation.landscape
-                    ? MediaQuery.of(context).padding.bottom + 16.0
-                    : MediaQuery.of(context).padding.bottom + 32.0,
+                MediaQuery.of(context).padding.bottom + 32.0,
               ),
-              child: Center(
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(26),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black..withValues(alpha: 0.08),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset('assets/images/logo_apex.png', width: w * 0.35),
-                      const SizedBox(height: 24),
-                      Icon(
-                        Icons.history,
-                        size: w * 0.17,
-                        color: const Color(0xFF143D36),
-                      ),
-                      const SizedBox(height: 18),
-                      Text(
-                        'Nenhuma transferência encontrada.',
-                        style: const TextStyle(
-                          color: Color(0xFF143D36),
-                          fontSize: 22.0,
-                          fontWeight: FontWeight.bold,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight:
+                      MediaQuery.of(context).size.height -
+                      kToolbarHeight -
+                      MediaQuery.of(context).padding.top -
+                      108,
+                ),
+                child: Center(
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(26),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Usuário: ${args.nome}',
-                        style: const TextStyle(
-                          color: Color(0xFF143D36),
-                          fontSize: 16.0,
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          'assets/images/logo_apex.png',
+                          width: (w * 0.35).clamp(120.0, 180.0),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                        const SizedBox(height: 24),
+                        Icon(
+                          Icons.history,
+                          size: (w * 0.17).clamp(55.0, 80.0),
+                          color: const Color(0xFF143D36),
+                        ),
+                        const SizedBox(height: 18),
+                        const Text(
+                          'Nenhuma transferência encontrada.',
+                          style: TextStyle(
+                            color: Color(0xFF143D36),
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Usuário: ${args.nome}',
+                          style: const TextStyle(
+                            color: Color(0xFF143D36),
+                            fontSize: 16.0,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -137,9 +176,7 @@ Future<void> compartilhar(Map<String, dynamic> item) async {
                 16.0,
                 24.0,
                 16.0,
-                MediaQuery.of(context).orientation == Orientation.landscape
-                    ? MediaQuery.of(context).padding.bottom + 16.0
-                    : MediaQuery.of(context).padding.bottom + 32.0,
+                MediaQuery.of(context).padding.bottom + 32.0,
               ),
               itemCount: transferencias.length,
               itemBuilder: (context, index) {
@@ -152,7 +189,7 @@ Future<void> compartilhar(Map<String, dynamic> item) async {
                     borderRadius: BorderRadius.circular(22),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black..withValues(alpha: 0.08),
+                        color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -188,7 +225,7 @@ Future<void> compartilhar(Map<String, dynamic> item) async {
                       padding: const EdgeInsets.only(top: 6),
                       child: Text(
                         'Conta: ${item['contaDestino']}\n'
-                        'Valor: R\$ ${item['valor']}\n'
+                        'Valor: R\$ ${formatarValorBrasil(item['valor'])}\n'
                         'Data: ${formatarDataBrasil(item['data'])}',
                         style: const TextStyle(
                           color: Color(0xFF143D36),

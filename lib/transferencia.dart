@@ -109,6 +109,7 @@ class _TransferenciaState extends State<Transferencia> {
 
   Future<void> _mostrarTransferenciaConcluida() async {
     final w = MediaQuery.of(context).size.width;
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -133,8 +134,8 @@ class _TransferenciaState extends State<Transferencia> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          width: w * 0.22,
-                          height: w * 0.22,
+                          width: (w * 0.22).clamp(70.0, 95.0),
+                          height: (w * 0.22).clamp(70.0, 95.0),
                           decoration: const BoxDecoration(
                             color: Color(0xFF48D6C5),
                             shape: BoxShape.circle,
@@ -142,7 +143,7 @@ class _TransferenciaState extends State<Transferencia> {
                           child: Icon(
                             Icons.check,
                             color: Colors.white,
-                            size: w * 0.14,
+                            size: (w * 0.14).clamp(42.0, 62.0),
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -186,6 +187,7 @@ class _TransferenciaState extends State<Transferencia> {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as UsuarioArgumentos;
+
     final w = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -195,25 +197,38 @@ class _TransferenciaState extends State<Transferencia> {
         backgroundColor: const Color(0xFF143D36),
         foregroundColor: Colors.white,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacementNamed(
+                context,
+                '/principal',
+                arguments: args,
+              );
+            }
+          },
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(
           16.0,
           24.0,
           16.0,
-          MediaQuery.of(context).orientation == Orientation.landscape
-              ? MediaQuery.of(context).padding.bottom + 16.0
-              : MediaQuery.of(context).padding.bottom + 32.0,
+          MediaQuery.of(context).padding.bottom + 32.0,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Center(
-              child: Image.asset('assets/images/logo_apex.png', width: w * 0.35),
+              child: Image.asset(
+                'assets/images/logo_apex.png',
+                width: (w * 0.35).clamp(120.0, 180.0),
+              ),
             ),
-
             const SizedBox(height: 24),
-
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(18),
@@ -222,7 +237,7 @@ class _TransferenciaState extends State<Transferencia> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black..withValues(alpha: 0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
@@ -230,9 +245,9 @@ class _TransferenciaState extends State<Transferencia> {
               ),
               child: Column(
                 children: [
-                  Text(
+                  const Text(
                     'Conta de origem',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Color(0xFF143D36),
                       fontSize: 16,
                     ),
@@ -251,9 +266,7 @@ class _TransferenciaState extends State<Transferencia> {
                 ],
               ),
             ),
-
             const SizedBox(height: 24),
-
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
@@ -261,7 +274,7 @@ class _TransferenciaState extends State<Transferencia> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black..withValues(alpha: 0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
@@ -272,12 +285,10 @@ class _TransferenciaState extends State<Transferencia> {
                 children: [
                   Icon(
                     Icons.swap_horiz,
-                    size: w * 0.20,
+                    size: (w * 0.20).clamp(60.0, 90.0),
                     color: const Color(0xFF143D36),
                   ),
-
                   const SizedBox(height: 20),
-
                   TextField(
                     controller: nomeDestinoController,
                     style: const TextStyle(color: Color(0xFF143D36)),
@@ -289,9 +300,7 @@ class _TransferenciaState extends State<Transferencia> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
                   TextField(
                     controller: contaDestinoController,
                     style: const TextStyle(color: Color(0xFF143D36)),
@@ -303,9 +312,7 @@ class _TransferenciaState extends State<Transferencia> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
                   TextField(
                     controller: valorController,
                     style: const TextStyle(color: Color(0xFF143D36)),
@@ -321,9 +328,7 @@ class _TransferenciaState extends State<Transferencia> {
                       decimal: true,
                     ),
                   ),
-
                   const SizedBox(height: 24),
-
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 31, 105, 93),

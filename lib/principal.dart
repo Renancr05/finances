@@ -10,7 +10,6 @@ class Principal extends StatelessWidget {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as UsuarioArgumentos;
-    final w = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: const Color(0xFFEAF3F0),
@@ -21,59 +20,72 @@ class Principal extends StatelessWidget {
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            16.0,
-            16.0,
-            16.0,
-            MediaQuery.of(context).orientation == Orientation.landscape
-                ? MediaQuery.of(context).padding.bottom + 16.0
-                : MediaQuery.of(context).padding.bottom + 32.0,
+      body: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+          16.0,
+          16.0,
+          16.0,
+          MediaQuery.of(context).padding.bottom + 32.0,
+        ),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight:
+                MediaQuery.of(context).size.height -
+                kToolbarHeight -
+                MediaQuery.of(context).padding.top -
+                108,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/images/logo_apex.png', width: w * 0.45),
-              const SizedBox(height: 32),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(26),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black..withValues(alpha: 0.08),
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/logo_apex.png',
+                  width: (MediaQuery.of(context).size.width * 0.45).clamp(
+                    140.0,
+                    220.0,
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    Text(
-                      'Bem-vindo, ${args.nome}',
-                      style: const TextStyle(
-                        color: Color(0xFF143D36),
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                const SizedBox(height: 32),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(22),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(26),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Conta: ${args.conta}',
-                      style: const TextStyle(
-                        color: Color(0xFF143D36),
-                        fontSize: 18,
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Bem-vindo, ${args.nome}',
+                        style: const TextStyle(
+                          color: Color(0xFF143D36),
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Text(
+                        'Conta: ${args.conta}',
+                        style: const TextStyle(
+                          color: Color(0xFF143D36),
+                          fontSize: 18,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

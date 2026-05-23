@@ -15,7 +15,6 @@ Future<Map> getData() async {
   );
 
   http.Response response = await http.get(url);
-
   return json.decode(response.body);
 }
 
@@ -34,31 +33,40 @@ class _CotacaoState extends State<Cotacao> {
   double dolar = 0.0;
   double euro = 0.0;
 
-  VoidCallback? _realChanged(String text) {
-    double real = double.parse(text);
+  void _clearFields() {
+    realController.text = "";
+    dolarController.text = "";
+    euroController.text = "";
+  }
 
+  void _realChanged(String text) {
+    if (text.isEmpty) {
+      _clearFields();
+      return;
+    }
+    double real = double.tryParse(text) ?? 0.0;
     dolarController.text = (real / dolar).toStringAsFixed(2);
     euroController.text = (real / euro).toStringAsFixed(2);
-
-    return null;
   }
 
-  VoidCallback? _dolarChanged(String text) {
-    double dolar = double.parse(text);
-
-    realController.text = (dolar * this.dolar).toStringAsFixed(2);
-    euroController.text = (dolar * this.dolar / euro).toStringAsFixed(2);
-
-    return null;
+  void _dolarChanged(String text) {
+    if (text.isEmpty) {
+      _clearFields();
+      return;
+    }
+    double dolarConvertido = double.tryParse(text) ?? 0.0;
+    realController.text = (dolarConvertido * dolar).toStringAsFixed(2);
+    euroController.text = (dolarConvertido * dolar / euro).toStringAsFixed(2);
   }
 
-  VoidCallback? _euroChanged(String text) {
-    double euro = double.parse(text);
-
-    realController.text = (euro * this.euro).toStringAsFixed(2);
-    dolarController.text = (euro * this.euro / dolar).toStringAsFixed(2);
-
-    return null;
+  void _euroChanged(String text) {
+    if (text.isEmpty) {
+      _clearFields();
+      return;
+    }
+    double euroConvertido = double.tryParse(text) ?? 0.0;
+    realController.text = (euroConvertido * euro).toStringAsFixed(2);
+    dolarController.text = (euroConvertido * euro / dolar).toStringAsFixed(2);
   }
 
   @override
@@ -94,34 +102,22 @@ class _CotacaoState extends State<Cotacao> {
 
             default:
               if (snapshot.hasError) {
-                String? erro = snapshot.error.toString();
-
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Text(
-                      'Ops, houve uma falha ao buscar os dados : $erro',
-                      style: const TextStyle(
-                        color: Color(0xFF143D36),
-                        fontSize: 22.0,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                return _buildErrorWidget(snapshot.error.toString());
+              } else if (snapshot.data == null ||
+                  !snapshot.data!.containsKey('results')) {
+                return _buildErrorWidget(
+                  "Os dados da API estão indisponíveis.",
                 );
               } else {
                 dolar = snapshot.data!['results']['currencies']['USD']['buy'];
                 euro = snapshot.data!['results']['currencies']['EUR']['buy'];
-                final w = MediaQuery.of(context).size.width;
 
                 return SingleChildScrollView(
                   padding: EdgeInsets.fromLTRB(
                     16.0,
                     24.0,
                     16.0,
-                    MediaQuery.of(context).orientation == Orientation.landscape
-                        ? MediaQuery.of(context).padding.bottom + 16.0
-                        : MediaQuery.of(context).padding.bottom + 32.0,
+                    MediaQuery.of(context).padding.bottom + 32.0,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -129,12 +125,10 @@ class _CotacaoState extends State<Cotacao> {
                       Center(
                         child: Image.asset(
                           'assets/images/logo_apex.png',
-                          width: w * 0.35,
+                          width: 150,
                         ),
                       ),
-
                       const SizedBox(height: 24),
-
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(18),
@@ -172,9 +166,7 @@ class _CotacaoState extends State<Cotacao> {
                           ],
                         ),
                       ),
-
                       const SizedBox(height: 24),
-
                       Container(
                         padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
@@ -182,7 +174,7 @@ class _CotacaoState extends State<Cotacao> {
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black..withValues(alpha: 0.08),
+                              color: Colors.black.withValues(alpha: 0.08),
                               blurRadius: 12,
                               offset: const Offset(0, 6),
                             ),
@@ -190,32 +182,26 @@ class _CotacaoState extends State<Cotacao> {
                         ),
                         child: Column(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.currency_exchange,
-                              size: w * 0.20,
-                              color: const Color(0xFF143D36),
+                              size: 90.0,
+                              color: Color(0xFF143D36),
                             ),
-
                             const SizedBox(height: 20),
-
                             campoTexto(
                               'Reais',
                               'R\$ ',
                               realController,
                               _realChanged,
                             ),
-
                             const SizedBox(height: 16),
-
                             campoTexto(
                               'Euros',
                               '€ ',
                               euroController,
                               _euroChanged,
                             ),
-
                             const SizedBox(height: 16),
-
                             campoTexto(
                               'Dólares',
                               'US\$ ',
@@ -236,11 +222,24 @@ class _CotacaoState extends State<Cotacao> {
     );
   }
 
+  Widget _buildErrorWidget(String erro) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Text(
+          'Ops, houve uma falha ao buscar os dados: $erro',
+          style: const TextStyle(color: Color(0xFF143D36), fontSize: 22.0),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
   Widget campoTexto(
     String label,
     String prefix,
     TextEditingController c,
-    Function? f,
+    void Function(String) f,
   ) {
     return TextField(
       controller: c,
@@ -251,7 +250,7 @@ class _CotacaoState extends State<Cotacao> {
         prefixText: prefix,
       ),
       style: const TextStyle(color: Color(0xFF143D36), fontSize: 22.0),
-      onChanged: (value) => {f!(value)},
+      onChanged: f,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
     );
   }

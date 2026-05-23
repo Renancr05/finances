@@ -40,7 +40,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    final w = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: const Color(0xFFEAF3F0),
       appBar: AppBar(
@@ -59,7 +58,7 @@ class _LoginState extends State<Login> {
           ),
           child: Column(
             children: [
-              Image.asset('assets/images/logo_apex.png', width: w * 0.45),
+              Image.asset('assets/images/logo_apex.png', width: 190),
 
               const SizedBox(height: 32),
 
@@ -71,7 +70,7 @@ class _LoginState extends State<Login> {
                   borderRadius: BorderRadius.circular(26),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black..withValues(alpha: 0.08),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 12,
                       offset: const Offset(0, 6),
                     ),
