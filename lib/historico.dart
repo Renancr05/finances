@@ -224,7 +224,7 @@ class _HistoricoState extends State<Historico> {
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 6),
                       child: Text(
-                        'Conta: ${item['contaDestino']}\n'
+                        'Conta destino: ${item['contaDestino']}\n'
                         'Valor: R\$ ${formatarValorBrasil(item['valor'])}\n'
                         'Data: ${formatarDataBrasil(item['data'])}',
                         style: const TextStyle(
