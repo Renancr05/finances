@@ -10,6 +10,7 @@ class Principal extends StatelessWidget {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as UsuarioArgumentos;
+    final w = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: const Color(0xFFEAF3F0),
@@ -22,11 +23,18 @@ class Principal extends StatelessWidget {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 120.0),
+          padding: EdgeInsets.fromLTRB(
+            16.0,
+            16.0,
+            16.0,
+            MediaQuery.of(context).orientation == Orientation.landscape
+                ? MediaQuery.of(context).padding.bottom + 16.0
+                : MediaQuery.of(context).padding.bottom + 32.0,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/logo_apex.png', width: 190),
+              Image.asset('assets/images/logo_apex.png', width: w * 0.45),
               const SizedBox(height: 32),
               Container(
                 width: double.infinity,

@@ -40,6 +40,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: const Color(0xFFEAF3F0),
       appBar: AppBar(
@@ -50,10 +51,15 @@ class _LoginState extends State<Login> {
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.fromLTRB(
+            16.0,
+            16.0,
+            16.0,
+            MediaQuery.of(context).padding.bottom + 16.0,
+          ),
           child: Column(
             children: [
-              Image.asset('assets/images/logo_apex.png', width: 190),
+              Image.asset('assets/images/logo_apex.png', width: w * 0.45),
 
               const SizedBox(height: 32),
 

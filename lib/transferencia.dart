@@ -108,6 +108,7 @@ class _TransferenciaState extends State<Transferencia> {
   }
 
   Future<void> _mostrarTransferenciaConcluida() async {
+    final w = MediaQuery.of(context).size.width;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -132,16 +133,16 @@ class _TransferenciaState extends State<Transferencia> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          width: 95,
-                          height: 95,
+                          width: w * 0.22,
+                          height: w * 0.22,
                           decoration: const BoxDecoration(
                             color: Color(0xFF48D6C5),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.check,
                             color: Colors.white,
-                            size: 62,
+                            size: w * 0.14,
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -185,6 +186,7 @@ class _TransferenciaState extends State<Transferencia> {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as UsuarioArgumentos;
+    final w = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: const Color(0xFFEAF3F0),
@@ -195,12 +197,19 @@ class _TransferenciaState extends State<Transferencia> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 120.0),
+        padding: EdgeInsets.fromLTRB(
+          16.0,
+          24.0,
+          16.0,
+          MediaQuery.of(context).orientation == Orientation.landscape
+              ? MediaQuery.of(context).padding.bottom + 16.0
+              : MediaQuery.of(context).padding.bottom + 32.0,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Center(
-              child: Image.asset('assets/images/logo_apex.png', width: 150),
+              child: Image.asset('assets/images/logo_apex.png', width: w * 0.35),
             ),
 
             const SizedBox(height: 24),
@@ -261,10 +270,10 @@ class _TransferenciaState extends State<Transferencia> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.swap_horiz,
-                    size: 90,
-                    color: Color(0xFF143D36),
+                    size: w * 0.20,
+                    color: const Color(0xFF143D36),
                   ),
 
                   const SizedBox(height: 20),

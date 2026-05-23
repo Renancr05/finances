@@ -63,6 +63,7 @@ Future<void> compartilhar(Map<String, dynamic> item) async {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as UsuarioArgumentos;
+    final w = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: const Color(0xFFEAF3F0),
@@ -74,7 +75,14 @@ Future<void> compartilhar(Map<String, dynamic> item) async {
       ),
       body: transferencias.isEmpty
           ? Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 120.0),
+              padding: EdgeInsets.fromLTRB(
+                16.0,
+                24.0,
+                16.0,
+                MediaQuery.of(context).orientation == Orientation.landscape
+                    ? MediaQuery.of(context).padding.bottom + 16.0
+                    : MediaQuery.of(context).padding.bottom + 32.0,
+              ),
               child: Center(
                 child: Container(
                   width: double.infinity,
@@ -93,12 +101,12 @@ Future<void> compartilhar(Map<String, dynamic> item) async {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.asset('assets/images/logo_apex.png', width: 150),
+                      Image.asset('assets/images/logo_apex.png', width: w * 0.35),
                       const SizedBox(height: 24),
-                      const Icon(
+                      Icon(
                         Icons.history,
-                        size: 70,
-                        color: Color(0xFF143D36),
+                        size: w * 0.17,
+                        color: const Color(0xFF143D36),
                       ),
                       const SizedBox(height: 18),
                       Text(
@@ -125,7 +133,14 @@ Future<void> compartilhar(Map<String, dynamic> item) async {
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 120.0),
+              padding: EdgeInsets.fromLTRB(
+                16.0,
+                24.0,
+                16.0,
+                MediaQuery.of(context).orientation == Orientation.landscape
+                    ? MediaQuery.of(context).padding.bottom + 16.0
+                    : MediaQuery.of(context).padding.bottom + 32.0,
+              ),
               itemCount: transferencias.length,
               itemBuilder: (context, index) {
                 final item = transferencias[index];

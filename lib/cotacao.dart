@@ -112,16 +112,24 @@ class _CotacaoState extends State<Cotacao> {
               } else {
                 dolar = snapshot.data!['results']['currencies']['USD']['buy'];
                 euro = snapshot.data!['results']['currencies']['EUR']['buy'];
+                final w = MediaQuery.of(context).size.width;
 
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 120.0),
+                  padding: EdgeInsets.fromLTRB(
+                    16.0,
+                    24.0,
+                    16.0,
+                    MediaQuery.of(context).orientation == Orientation.landscape
+                        ? MediaQuery.of(context).padding.bottom + 16.0
+                        : MediaQuery.of(context).padding.bottom + 32.0,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Center(
                         child: Image.asset(
                           'assets/images/logo_apex.png',
-                          width: 150,
+                          width: w * 0.35,
                         ),
                       ),
 
@@ -182,10 +190,10 @@ class _CotacaoState extends State<Cotacao> {
                         ),
                         child: Column(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.currency_exchange,
-                              size: 90.0,
-                              color: Color(0xFF143D36),
+                              size: w * 0.20,
+                              color: const Color(0xFF143D36),
                             ),
 
                             const SizedBox(height: 20),

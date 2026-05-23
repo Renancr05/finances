@@ -10,8 +10,25 @@ class RodapeBanco extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final EdgeInsets sysPadding = MediaQuery.of(context).padding;
+    final bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    // Dimensões adaptativas: menores em paisagem
+    final double outerHeight =
+        (isLandscape ? 62.0 : 108.0) + sysPadding.bottom;
+    final double containerHeight =
+        (isLandscape ? 54.0 : 84.0) + sysPadding.bottom;
+    final double circleSize = isLandscape ? 44.0 : 78.0;
+    final double circleIconSize = isLandscape ? 24.0 : 42.0;
+    final double iconSize = isLandscape ? 20.0 : 30.0;
+    final double fontSize = isLandscape ? 10.0 : 13.0;
+    final double labelTop = isLandscape ? 50.0 : 80.0;
+    final double spacerWidth = isLandscape ? 54.0 : 82.0;
+    final double itemWidth = isLandscape ? 52.0 : 68.0;
+
     return SizedBox(
-      height: 108,
+      height: outerHeight,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -20,7 +37,7 @@ class RodapeBanco extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              height: 84,
+              height: containerHeight,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -35,61 +52,77 @@ class RodapeBanco extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _itemRodape(
-                    context: context,
-                    icone: Icons.account_balance,
-                    texto: 'Início',
-                    ativo: telaAtiva == 'inicio',
-                    onTap: () {
-                      if (telaAtiva == 'inicio') return;
-
-                      Navigator.pushNamed(
-                        context,
-                        '/principal',
-                        arguments: args,
-                      );
-                    },
-                  ),
-                  _itemRodape(
-                    context: context,
-                    icone: Icons.currency_exchange,
-                    texto: 'Cotação',
-                    ativo: telaAtiva == 'cotacao',
-                    onTap: () {
-                      if (telaAtiva == 'cotacao') return;
-
-                      Navigator.pushNamed(context, '/cotacao', arguments: args);
-                    },
-                  ),
-                  const SizedBox(width: 82),
-                  _itemRodape(
-                    context: context,
-                    icone: Icons.history,
-                    texto: 'Histórico',
-                    ativo: telaAtiva == 'historico',
-                    onTap: () {
-                      if (telaAtiva == 'historico') return;
-
-                      Navigator.pushNamed(
-                        context,
-                        '/historico',
-                        arguments: args,
-                      );
-                    },
-                  ),
-                  _itemRodape(
-                    context: context,
-                    icone: Icons.logout,
-                    texto: 'Sair',
-                    ativo: false,
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                  ),
-                ],
+              child: Padding(
+                padding: EdgeInsets.only(bottom: sysPadding.bottom),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _itemRodape(
+                      context: context,
+                      icone: Icons.account_balance,
+                      texto: 'Início',
+                      ativo: telaAtiva == 'inicio',
+                      iconSize: iconSize,
+                      fontSize: fontSize,
+                      itemWidth: itemWidth,
+                      onTap: () {
+                        if (telaAtiva == 'inicio') return;
+                        Navigator.pushNamed(
+                          context,
+                          '/principal',
+                          arguments: args,
+                        );
+                      },
+                    ),
+                    _itemRodape(
+                      context: context,
+                      icone: Icons.currency_exchange,
+                      texto: 'Cotação',
+                      ativo: telaAtiva == 'cotacao',
+                      iconSize: iconSize,
+                      fontSize: fontSize,
+                      itemWidth: itemWidth,
+                      onTap: () {
+                        if (telaAtiva == 'cotacao') return;
+                        Navigator.pushNamed(
+                          context,
+                          '/cotacao',
+                          arguments: args,
+                        );
+                      },
+                    ),
+                    SizedBox(width: spacerWidth),
+                    _itemRodape(
+                      context: context,
+                      icone: Icons.history,
+                      texto: 'Histórico',
+                      ativo: telaAtiva == 'historico',
+                      iconSize: iconSize,
+                      fontSize: fontSize,
+                      itemWidth: itemWidth,
+                      onTap: () {
+                        if (telaAtiva == 'historico') return;
+                        Navigator.pushNamed(
+                          context,
+                          '/historico',
+                          arguments: args,
+                        );
+                      },
+                    ),
+                    _itemRodape(
+                      context: context,
+                      icone: Icons.logout,
+                      texto: 'Sair',
+                      ativo: false,
+                      iconSize: iconSize,
+                      fontSize: fontSize,
+                      itemWidth: itemWidth,
+                      onTap: () {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -99,12 +132,11 @@ class RodapeBanco extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 if (telaAtiva == 'transferencia') return;
-
                 Navigator.pushNamed(context, '/transferencia', arguments: args);
               },
               child: Container(
-                width: 78,
-                height: 78,
+                width: circleSize,
+                height: circleSize,
                 decoration: BoxDecoration(
                   color: telaAtiva == 'transferencia'
                       ? const Color(0xFF143D36)
@@ -118,20 +150,20 @@ class RodapeBanco extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.swap_horiz,
                   color: Colors.white,
-                  size: 42,
+                  size: circleIconSize,
                 ),
               ),
             ),
           ),
 
-          const Positioned(
-            top: 80,
+          Positioned(
+            top: labelTop,
             child: Text(
               'Transferência',
-              style: TextStyle(color: Colors.black, fontSize: 13),
+              style: TextStyle(color: Colors.black, fontSize: fontSize),
             ),
           ),
         ],
@@ -145,18 +177,21 @@ class RodapeBanco extends StatelessWidget {
     required String texto,
     required bool ativo,
     required VoidCallback onTap,
+    required double iconSize,
+    required double fontSize,
+    required double itemWidth,
   }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(18),
       child: SizedBox(
-        width: 68,
+        width: itemWidth,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icone,
-              size: 30,
+              size: iconSize,
               color: ativo ? const Color(0xFF143D36) : Colors.black87,
             ),
             const SizedBox(height: 4),
@@ -164,7 +199,7 @@ class RodapeBanco extends StatelessWidget {
               texto,
               style: TextStyle(
                 color: ativo ? const Color(0xFF143D36) : Colors.black87,
-                fontSize: 13,
+                fontSize: fontSize,
                 fontWeight: ativo ? FontWeight.bold : FontWeight.normal,
               ),
               textAlign: TextAlign.center,
