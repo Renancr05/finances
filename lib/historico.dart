@@ -48,8 +48,9 @@ class _HistoricoState extends State<Historico> {
 
     String hora = dateTime.hour.toString().padLeft(2, '0');
     String minuto = dateTime.minute.toString().padLeft(2, '0');
+    String segundo = dateTime.second.toString().padLeft(2, '0');
 
-    return '$dia/$mes/$ano $hora:$minuto';
+    return '$dia/$mes/$ano $hora:$minuto:$segundo';
   }
 
   String formatarValorBrasil(dynamic valor) {
