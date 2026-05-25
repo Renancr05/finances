@@ -47,7 +47,7 @@ flutter devices
 
 -Gerar APK otimizado por arquitetura:
 
-flutter build apk --universal
+flutter build apk
 
 -Comandos relacionados ao Android/ADB Ir para a pasta do ADB:
 
