@@ -42,7 +42,7 @@ class _TransferenciaState extends State<Transferencia> {
     await BancoHelper().inserirTransferencia({
       'nomeDestino': descricao,
       'contaDestino': 'Pix Apex Bank',
-      'valor': tipo == 'debito' ? -valor : valor,
+      'valor': tipo == 'debito' ? valor : valor,
       'data': DateTime.now().toString(),
     });
   }
@@ -314,7 +314,7 @@ class _TransferenciaState extends State<Transferencia> {
     await BancoHelper().inserirTransferencia({
       'nomeDestino': nomeDestinoController.text,
       'contaDestino': contaDestinoController.text,
-      'valor': -valor, // Transferência manual debita o valor
+      'valor': valor, // Transferência manual debita o valor
       'data': DateTime.now().toString(),
     });
 
