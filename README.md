@@ -2,7 +2,7 @@
 
 Projeto mobile desenvolvido em Flutter para Android, simulando um aplicativo de banco digital.
 
-O app possui tela inicial animada, login, tela principal, cotação de moedas via API, transferência com autenticação local, histórico com banco de dados SQLite, compartilhamento de comprovante e navegação com rotas nomeadas e argumentos.
+O app possui tela inicial animada, login, tela principal, cotação de moedas via API, transferência com autenticação local, histórico com banco de dados SQLite, sistema de pagamento via Pix autônomo (QR Code e Copia e Cola), compartilhamento de comprovante e navegação com rotas nomeadas e argumentos.
 
 ---
 
@@ -21,6 +21,9 @@ O app possui tela inicial animada, login, tela principal, cotação de moedas vi
 - Rotas nomeadas.
 - Rotas nomeadas com argumentos.
 - Geração de APK otimizado para Android.
+- [Novo] Geração de cobrança Pix offline (QR Code e código Copia e Cola) via payload EMV.
+- [Novo] Leitura de QR Code via câmera para pagamentos Pix.
+- [Novo] Inserção manual de chave "Pix Copia e Cola" na tela de scanner.
 
 ---
 
@@ -36,31 +39,48 @@ O app possui tela inicial animada, login, tela principal, cotação de moedas vi
 
 ## Principais comandos no terminal
 
--Limpar e baixar dependências novamente:
+-Limpar e baixar dependências novamente (Windows/Linux):
 
 flutter clean
 flutter pub get
 
--Ver dispositivos conectados:
+-Ver dispositivos conectados (Windows/Linux):
 
 flutter devices
 
--Gerar APK otimizado por arquitetura:
+-Gerar APK otimizado por arquitetura (Windows/Linux):
 
-flutter build apk
+flutter build apk --universal
+
+-Gerar APK otimizado para Produção (Release) - Adicionado (Windows/Linux):
+
+flutter build apk --release
 
 -Comandos relacionados ao Android/ADB Ir para a pasta do ADB:
 
+Windows:
 cd "$env:LOCALAPPDATA\Android\Sdk\platform-tools"
+
+Linux/macOS:
+cd ~/Android/Sdk/platform-tools
 
 -Reiniciar o ADB:
 
+Windows:
 .\adb.exe kill-server
 .\adb.exe start-server
 
+Linux/macOS:
+adb kill-server
+adb start-server
+
 -Ver dispositivos Android reconhecidos pelo ADB:
 
+Windows:
 .\adb.exe devices
+
+Linux/macOS:
+adb devices
 
 -O ideal é aparecer:
 
@@ -86,6 +106,8 @@ dependencies:
   sqflite: ^2.3.0
   path: ^1.9.0
   local_auth: ^3.0.1
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.1.1
 
 dev_dependencies:
   flutter_test:

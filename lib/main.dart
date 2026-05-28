@@ -8,7 +8,7 @@ import 'principal.dart';
 import 'splash.dart';
 import 'transferencia.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(

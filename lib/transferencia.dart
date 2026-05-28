@@ -1,10 +1,17 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'argumentos.dart';
 import 'banco.dart';
+import 'leitor_qr_code.dart';
+import 'services/pix_generator.dart';
+import 'services/validador_payload.dart';
 import 'widgets/rodape_banco.dart';
 
 class Transferencia extends StatefulWidget {
@@ -27,15 +34,245 @@ class _TransferenciaState extends State<Transferencia> {
     super.dispose();
   }
 
+  Future<void> _registrarTransacao(
+    String tipo,
+    double valor,
+    String descricao,
+  ) async {
+    await BancoHelper().inserirTransferencia({
+      'nomeDestino': descricao,
+      'contaDestino': 'Pix Apex Bank',
+      'valor': tipo == 'debito' ? -valor : valor,
+      'data': DateTime.now().toString(),
+    });
+  }
+
+  Future<void> _compartilharPix(String copiaECola, String nomeUsuario) async {
+    try {
+      final painter = QrPainter(
+        data: copiaECola,
+        version: QrVersions.auto,
+        color: const Color(0xFF143D36),
+        emptyColor: Colors.white,
+      );
+
+      final picData = await painter.toImageData(
+        1024,
+        format: ImageByteFormat.png,
+      );
+
+      if (picData != null) {
+        final tempDir = Directory.systemTemp;
+        final file = await File('${tempDir.path}/qr_apex_bank.png').create();
+        await file.writeAsBytes(picData.buffer.asUint8List());
+
+        await Share.shareXFiles(
+          [XFile(file.path)],
+          text:
+              'Cobrança de $nomeUsuario via Apex Bank.\n\nCódigo Copia e Cola:\n$copiaECola',
+          subject: 'Cobrança Pix - Apex Bank',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro ao compartilhar: $e')));
+      }
+    }
+  }
+
+  void _modalGerarPix(String nomeUsuario) {
+    final TextEditingController vCtrl = TextEditingController();
+    String? copiaECola;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+            top: 24,
+            left: 24,
+            right: 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Receber via Pix',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF143D36),
+                ),
+              ),
+              if (copiaECola == null) ...[
+                const SizedBox(height: 16),
+                TextField(
+                  controller: vCtrl,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  style: const TextStyle(color: Color(0xFF143D36)),
+                  decoration: InputDecoration(
+                    labelText: 'Valor',
+                    prefixText: 'R\$ ',
+                    labelStyle: const TextStyle(color: Color(0xFF143D36)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF143D36),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    onPressed: () async {
+                      final val = double.tryParse(
+                        vCtrl.text.replaceAll(',', '.'),
+                      );
+                      if (val != null && val > 0) {
+                        await _registrarTransacao(
+                          'credito',
+                          val,
+                          'Recebido Pix',
+                        );
+                        setModalState(
+                          () => copiaECola = PixGenerator.gerarPayload(
+                            val,
+                            "ApexBank",
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text(
+                      'Gerar QR Code',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ] else ...[
+                const SizedBox(height: 16),
+                QrImageView(
+                  data: copiaECola!,
+                  size: 200,
+                  foregroundColor: const Color(0xFF143D36),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Registrado como entrada no histórico.',
+                  style: TextStyle(
+                    color: Color(0xFF143D36),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF48D6C5),
+                      foregroundColor: const Color(0xFF143D36),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 2,
+                    ),
+                    onPressed: () => _compartilharPix(copiaECola!, nomeUsuario),
+                    icon: const Icon(Icons.share),
+                    label: const Text(
+                      'Compartilhar Pix',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _abrirLeitorQrCode() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LeitorQrCode()),
+    );
+    if (result != null &&
+        result is String &&
+        ValidadorPayload.validarPix(result)) {
+      double? valor = ValidadorPayload.extrairValor(result);
+      _confirmarPagamento(valor ?? 0.0);
+    }
+  }
+
+  void _confirmarPagamento(double valor) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text(
+          'Confirmar Pagamento',
+          style: TextStyle(color: Color(0xFF143D36)),
+        ),
+        content: Text(
+          'Confirmar pagamento de R\$ ${valor.toStringAsFixed(2)}?',
+          style: const TextStyle(color: Color(0xFF143D36)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+
+              final bool autenticado = await autenticarUsuario();
+              if (!mounted || !autenticado) return;
+
+              await _registrarTransacao('debito', valor, 'Pagamento Pix');
+
+              if (mounted) {
+                await _mostrarTransferenciaConcluida();
+              }
+            },
+            child: const Text(
+              'Confirmar',
+              style: TextStyle(
+                color: Color(0xFF48D6C5),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<bool> autenticarUsuario() async {
     final LocalAuthentication auth = LocalAuthentication();
-
     try {
       final bool dispositivoSuportado = await auth.isDeviceSupported();
       final bool podeChecarBiometria = await auth.canCheckBiometrics;
-
       if (!mounted) return false;
-
       if (!dispositivoSuportado && !podeChecarBiometria) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -44,22 +281,17 @@ class _TransferenciaState extends State<Transferencia> {
         );
         return false;
       }
-
-      final bool autenticado = await auth.authenticate(
+      return await auth.authenticate(
         localizedReason:
             'Confirme sua identidade para realizar a transferência',
         biometricOnly: false,
         persistAcrossBackgrounding: true,
       );
-
-      return autenticado;
     } catch (e) {
-      if (!mounted) return false;
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro na autenticação: $e')));
-
+      if (mounted)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro na autenticação tente novamente.')),
+        );
       return false;
     }
   }
@@ -77,34 +309,23 @@ class _TransferenciaState extends State<Transferencia> {
     double valor = double.parse(valorController.text.replaceAll(',', '.'));
 
     final bool autenticado = await autenticarUsuario();
-
-    if (!mounted) return;
-
-    if (!autenticado) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Transferência cancelada. Autenticação não realizada.'),
-        ),
-      );
-      return;
-    }
+    if (!mounted || !autenticado) return;
 
     await BancoHelper().inserirTransferencia({
       'nomeDestino': nomeDestinoController.text,
       'contaDestino': contaDestinoController.text,
-      'valor': valor,
+      'valor': -valor, // Transferência manual debita o valor
       'data': DateTime.now().toString(),
     });
 
     if (!mounted) return;
-
     await _mostrarTransferenciaConcluida();
 
-    if (!mounted) return;
-
-    nomeDestinoController.clear();
-    contaDestinoController.clear();
-    valorController.clear();
+    if (mounted) {
+      nomeDestinoController.clear();
+      contaDestinoController.clear();
+      valorController.clear();
+    }
   }
 
   Future<void> _mostrarTransferenciaConcluida() async {
@@ -158,7 +379,7 @@ class _TransferenciaState extends State<Transferencia> {
                         ),
                         const SizedBox(height: 12),
                         const Text(
-                          'Sua transferência foi autenticada e enviada com sucesso.',
+                          'Sua transferência foi enviada com sucesso.',
                           style: TextStyle(
                             color: Color(0xFF143D36),
                             fontSize: 15,
@@ -177,7 +398,6 @@ class _TransferenciaState extends State<Transferencia> {
     );
 
     await Future.delayed(const Duration(seconds: 2));
-
     if (mounted) {
       Navigator.pop(context);
     }
@@ -187,7 +407,6 @@ class _TransferenciaState extends State<Transferencia> {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as UsuarioArgumentos;
-
     final w = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -197,20 +416,6 @@ class _TransferenciaState extends State<Transferencia> {
         backgroundColor: const Color(0xFF143D36),
         foregroundColor: Colors.white,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            } else {
-              Navigator.pushReplacementNamed(
-                context,
-                '/principal',
-                arguments: args,
-              );
-            }
-          },
-        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(
@@ -229,6 +434,7 @@ class _TransferenciaState extends State<Transferencia> {
               ),
             ),
             const SizedBox(height: 24),
+
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(18),
@@ -237,7 +443,7 @@ class _TransferenciaState extends State<Transferencia> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
+                    color: Colors.black.withOpacity(0.08),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
@@ -247,10 +453,7 @@ class _TransferenciaState extends State<Transferencia> {
                 children: [
                   const Text(
                     'Conta de origem',
-                    style: TextStyle(
-                      color: Color(0xFF143D36),
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Color(0xFF143D36), fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 6),
@@ -267,6 +470,52 @@ class _TransferenciaState extends State<Transferencia> {
               ),
             ),
             const SizedBox(height: 24),
+
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF48D6C5),
+                      foregroundColor: const Color(0xFF143D36),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 4,
+                    ),
+                    onPressed: _abrirLeitorQrCode,
+                    icon: const Icon(Icons.qr_code_scanner),
+                    label: const Text(
+                      'Pagar Pix',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF143D36),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 4,
+                    ),
+                    onPressed: () => _modalGerarPix(args.nome),
+                    icon: const Icon(Icons.qr_code),
+                    label: const Text(
+                      'Receber Pix',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
@@ -274,7 +523,7 @@ class _TransferenciaState extends State<Transferencia> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
+                    color: Colors.black.withOpacity(0.08),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
@@ -318,11 +567,11 @@ class _TransferenciaState extends State<Transferencia> {
                     style: const TextStyle(color: Color(0xFF143D36)),
                     decoration: InputDecoration(
                       labelText: 'Valor',
+                      prefixText: 'R\$ ',
                       labelStyle: const TextStyle(color: Color(0xFF143D36)),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      prefixText: 'R\$ ',
                     ),
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
@@ -331,11 +580,11 @@ class _TransferenciaState extends State<Transferencia> {
                   const SizedBox(height: 24),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 31, 105, 93),
+                      backgroundColor: const Color(0xFF143D36),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                     ),
                     onPressed: enviarTransferencia,
