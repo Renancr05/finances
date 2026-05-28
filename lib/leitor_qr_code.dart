@@ -15,13 +15,13 @@ class _LeitorQrCodeState extends State<LeitorQrCode> {
   // --- Janela para inserção manual do Pix Copia e Cola ---
   void _exibirDialogoCodigoManual() {
     final TextEditingController txtCtrl = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text(
-          'Digitar Pix Copia e Cola', 
+          'Digitar Pix Copia e Cola',
           style: TextStyle(color: Color(0xFF143D36), fontWeight: FontWeight.bold),
         ),
         content: TextField(
@@ -29,7 +29,7 @@ class _LeitorQrCodeState extends State<LeitorQrCode> {
           maxLines: 3,
           style: const TextStyle(color: Color(0xFF143D36)),
           decoration: InputDecoration(
-            hintText: 'Cole ou digite do Pix aqui.',
+            hintText: 'Cole ou digite o código para efetuar o pagamento.',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           ),
         ),
@@ -48,7 +48,7 @@ class _LeitorQrCodeState extends State<LeitorQrCode> {
               }
             },
             child: const Text(
-              'Confirmar', 
+              'Confirmar',
               style: TextStyle(color: Color(0xFF48D6C5), fontWeight: FontWeight.bold),
             ),
           ),
@@ -84,7 +84,7 @@ class _LeitorQrCodeState extends State<LeitorQrCode> {
               }
             },
           ),
-          
+
           Center(
             child: Container(
               width: 250,
@@ -95,7 +95,7 @@ class _LeitorQrCodeState extends State<LeitorQrCode> {
               ),
             ),
           ),
-          
+
           Positioned(
             bottom: 40,
             left: 24,
