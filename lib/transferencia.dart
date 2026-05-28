@@ -52,8 +52,15 @@ class _TransferenciaState extends State<Transferencia> {
       final painter = QrPainter(
         data: copiaECola,
         version: QrVersions.auto,
-        color: const Color(0xFF143D36),
-        emptyColor: Colors.white,
+        // Configuração atualizada para as versões mais recentes do qr_flutter
+        eyeStyle: const QrEyeStyle(
+          eyeShape: QrEyeShape.square,
+          color: Color(0xFF143D36),
+        ),
+        dataModuleStyle: const QrDataModuleStyle(
+          dataModuleShape: QrDataModuleShape.square,
+          color: Color(0xFF143D36),
+        ),
       );
 
       final picData = await painter.toImageData(
@@ -153,8 +160,11 @@ class _TransferenciaState extends State<Transferencia> {
                         );
                         setModalState(
                           () => copiaECola = PixGenerator.gerarPayload(
-                            val,
-                            "ApexBank",
+                            chavePix: "suachave@apexbank.com",
+                            valor: val,
+                            nomeDestinatario: nomeUsuario.isNotEmpty
+                                ? nomeUsuario
+                                : "ApexBank",
                           ),
                         );
                       }
@@ -170,7 +180,16 @@ class _TransferenciaState extends State<Transferencia> {
                 QrImageView(
                   data: copiaECola!,
                   size: 200,
-                  foregroundColor: const Color(0xFF143D36),
+                  backgroundColor:
+                      Colors.white, // Garante visibilidade no dark mode
+                  eyeStyle: const QrEyeStyle(
+                    eyeShape: QrEyeShape.square,
+                    color: Color(0xFF143D36),
+                  ),
+                  dataModuleStyle: const QrDataModuleStyle(
+                    dataModuleShape: QrDataModuleShape.square,
+                    color: Color(0xFF143D36),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 const Text(
@@ -288,10 +307,13 @@ class _TransferenciaState extends State<Transferencia> {
         persistAcrossBackgrounding: true,
       );
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro na autenticação tente novamente.')),
+          const SnackBar(
+            content: Text('Erro na autenticação tente novamente.'),
+          ),
         );
+      }
       return false;
     }
   }
@@ -314,7 +336,7 @@ class _TransferenciaState extends State<Transferencia> {
     await BancoHelper().inserirTransferencia({
       'nomeDestino': nomeDestinoController.text,
       'contaDestino': contaDestinoController.text,
-      'valor': valor, // Transferência manual debita o valor
+      'valor': valor,
       'data': DateTime.now().toString(),
     });
 
