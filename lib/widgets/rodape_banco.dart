@@ -61,7 +61,7 @@ class RodapeBanco extends StatelessWidget {
                       onTap: () {
                         if (telaAtiva == 'cotacao') return;
 
-                        Navigator.pushReplacementNamed(
+                        Navigator.pushNamed(
                           context,
                           '/cotacao',
                           arguments: args,
@@ -76,7 +76,7 @@ class RodapeBanco extends StatelessWidget {
                       onTap: () {
                         if (telaAtiva == 'historico') return;
 
-                        Navigator.pushReplacementNamed(
+                        Navigator.pushNamed(
                           context,
                           '/historico',
                           arguments: args,
@@ -101,7 +101,7 @@ class RodapeBanco extends StatelessWidget {
                 onTap: () {
                   if (telaAtiva == 'transferencia') return;
 
-                  Navigator.pushReplacementNamed(
+                  Navigator.pushNamed(
                     context,
                     '/transferencia',
                     arguments: args,

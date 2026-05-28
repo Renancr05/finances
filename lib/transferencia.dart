@@ -73,11 +73,14 @@ class _TransferenciaState extends State<Transferencia> {
         final file = await File('${tempDir.path}/qr_apex_bank.png').create();
         await file.writeAsBytes(picData.buffer.asUint8List());
 
-        await Share.shareXFiles(
-          [XFile(file.path)],
-          text:
-              'Cobrança de $nomeUsuario via Apex Bank.\n\nCódigo Copia e Cola:\n$copiaECola',
-          subject: 'Cobrança Pix - Apex Bank',
+        // Nova sintaxe obrigatória nas versões mais recentes do share_plus
+        await SharePlus.instance.share(
+          ShareParams(
+            files: [XFile(file.path)],
+            text:
+                'Cobrança de $nomeUsuario via Apex Bank.\n\nCódigo Copia e Cola:\n$copiaECola',
+            subject: 'Cobrança Pix - Apex Bank',
+          ),
         );
       }
     } catch (e) {
@@ -465,7 +468,7 @@ class _TransferenciaState extends State<Transferencia> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
@@ -545,7 +548,7 @@ class _TransferenciaState extends State<Transferencia> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
