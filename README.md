@@ -50,7 +50,7 @@ flutter devices
 
 -Gerar APK otimizado por arquitetura (Windows/Linux):
 
-flutter build apk --universal
+flutter build apk
 
 -Gerar APK otimizado para Produção (Release) - Adicionado (Windows/Linux):
 
