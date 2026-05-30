@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
@@ -126,9 +127,8 @@ class _TransferenciaState extends State<Transferencia> {
                 const SizedBox(height: 16),
                 TextField(
                   controller: vCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  keyboardType: TextInputType.number,
                   style: const TextStyle(color: Color(0xFF143D36)),
                   decoration: InputDecoration(
                     labelText: 'Valor',
@@ -565,6 +565,12 @@ class _TransferenciaState extends State<Transferencia> {
                   const SizedBox(height: 20),
                   TextField(
                     controller: nomeDestinoController,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-ZÀ-ÿ ]'),
+                      ),
+                    ],
                     style: const TextStyle(color: Color(0xFF143D36)),
                     decoration: InputDecoration(
                       labelText: 'Nome do destinatário',
@@ -577,6 +583,8 @@ class _TransferenciaState extends State<Transferencia> {
                   const SizedBox(height: 16),
                   TextField(
                     controller: contaDestinoController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     style: const TextStyle(color: Color(0xFF143D36)),
                     decoration: InputDecoration(
                       labelText: 'Conta de destino',
@@ -589,6 +597,8 @@ class _TransferenciaState extends State<Transferencia> {
                   const SizedBox(height: 16),
                   TextField(
                     controller: valorController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     style: const TextStyle(color: Color(0xFF143D36)),
                     decoration: InputDecoration(
                       labelText: 'Valor',
@@ -597,9 +607,6 @@ class _TransferenciaState extends State<Transferencia> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                    ),
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
                     ),
                   ),
                   const SizedBox(height: 24),

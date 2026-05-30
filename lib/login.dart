@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'argumentos.dart';
 
@@ -101,6 +102,12 @@ class _LoginState extends State<Login> {
 
                     TextField(
                       controller: nomeController,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[a-zA-ZÀ-ÿ ]'),
+                        ),
+                      ],
                       style: const TextStyle(color: Color(0xFF143D36)),
                       decoration: InputDecoration(
                         labelText: 'Nome do usuário',
@@ -119,6 +126,8 @@ class _LoginState extends State<Login> {
 
                     TextField(
                       controller: contaController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       style: const TextStyle(color: Color(0xFF143D36)),
                       decoration: InputDecoration(
                         labelText: 'Número da conta',

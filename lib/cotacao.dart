@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import 'argumentos.dart';
@@ -243,6 +244,8 @@ class _CotacaoState extends State<Cotacao> {
   ) {
     return TextField(
       controller: c,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Color(0xFF143D36)),
@@ -251,7 +254,6 @@ class _CotacaoState extends State<Cotacao> {
       ),
       style: const TextStyle(color: Color(0xFF143D36), fontSize: 22.0),
       onChanged: f,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
     );
   }
 }
